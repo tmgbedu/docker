@@ -59,6 +59,27 @@ services:
             start_period: 10s
         restart: unless-stopped
 
+    postgres-omni:
+        image: google/alloydbomni:17.10.0
+        container_name: postgres-omni
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_PASSWORD: postgres
+        shm_size: 1g
+        mem_limit: 4g
+        volumes:
+            - alloydb_data:/var/lib/postgresql/data
+        networks:
+            - local
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+            interval: 10s
+            timeout: 5s
+            retries: 3
+            start_period: 30s
+        restart: unless-stopped
+
     opensearch:
         image: opensearchproject/opensearch:latest
         container_name: local-opensearch
@@ -106,4 +127,5 @@ volumes:
     minio_data:
     redis_data:
     postgres_data:
+    alloydb_data:
     opensearch_data:
